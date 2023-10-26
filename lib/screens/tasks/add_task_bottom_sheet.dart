@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/Models/taskMode.dart';
 import 'package:todo/shared/network/firebase/firebaseManager.dart';
@@ -66,10 +67,28 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           ElevatedButton(
               onPressed: () {
                 TaskModel task = TaskModel(
+                    userId: FirebaseAuth.instance.currentUser!.uid,
                     title: titleController.text,
                     describtion: descriptionController.text,
-                    date: selectedDate.millisecondsSinceEpoch);
+                    date: DateUtils.dateOnly(selectedDate)
+                        .millisecondsSinceEpoch);
                 FirebaseManager.addTask(task);
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Successfully"),
+                        content: Text("Task Added Successfully"),
+                        actions: [
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              child: Text("Okay"))
+                        ],
+                      );
+                    });
               },
               child: Text('Add Task'))
         ],
